@@ -8,7 +8,7 @@ import os
 
 from sklearn.model_selection import train_test_split
 
-from ndm.model import MODEL
+from odet.ndm.model import MODEL
 from utils.tool import dump_data, load_data
 
 RANDOM_STATE = 42

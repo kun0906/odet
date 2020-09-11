@@ -14,7 +14,7 @@ from scapy.all import *
 from scapy.layers.inet import IP, TCP, UDP
 from sklearn.utils import shuffle
 
-from utils.tool import data_info, timing
+from kjl.utils.tool import data_info, timing
 
 
 def _get_fid(pkt):
@@ -748,7 +748,7 @@ class PCAP:
         self.pcap2flows.__dict__['tot_time'] = tot_time
 
     @timing
-    def _flow2features(self, feat_type='IAT', *, fft=False, header=False):
+    def _flow2features(self, feat_type='IAT', *, fft=False, header=False, dim=None):
         """Extract features from each flow according to feat_type, fft and header.
 
         Parameters
@@ -768,8 +768,9 @@ class PCAP:
         """
         self.feat_type = feat_type
 
-        num_pkts = [len(pkts) for pkts in self.flows]
-        dim = int(np.floor(np.quantile(num_pkts, self.q_interval)))  # use the same q_interval to get the dimension
+        if dim is None:
+            num_pkts = [len(pkts) for fid, pkts in self.flows]
+            dim = int(np.floor(np.quantile(num_pkts, self.q_interval)))  # use the same q_interval to get the dimension
 
         if feat_type in ['IAT', 'FFT-IAT']:
             self.dim = dim - 1
@@ -798,11 +799,13 @@ class PCAP:
             msg = f'feat_type ({feat_type}) is not correct! '
             raise ValueError(msg)
 
+        print(f'self.dim: {self.dim}, feat_type: {feat_type}')
         if fft:
-            self.features = _get_FFT_data(self.features, fft_bin=dim)
+            self.features = _get_FFT_data(self.features, fft_bin=self.dim)
         else:
             # fix each flow to the same feature dimension (cut off the flow or append 0 to it)
-            self.features = [v[:dim] if len(v) > dim else v + [0] * (dim - len(v)) for v in self.features]
+            self.features = [v[:self.dim] if len(v) > self.dim else v + [0] * (self.dim - len(v)) for v in
+                             self.features]
 
         if header:
             _headers = _get_header_features(self.flows)
@@ -820,7 +823,7 @@ class PCAP:
         if self.verbose > 5:
             print(np.all(self.features >= 0))
 
-    def flow2features(self, feat_type='IAT', *, fft=False, header=False):
+    def flow2features(self, feat_type='IAT', *, fft=False, header=False, dim=None):
         """Extract features from each flow according to feat_type, fft and header.
 
         Parameters
@@ -838,7 +841,7 @@ class PCAP:
         -------
             self
         """
-        _, tot_time = self._flow2features(feat_type, fft=fft, header=header)
+        _, tot_time = self._flow2features(feat_type, fft=fft, header=header, dim=dim)
         self.flow2features.__dict__['tot_time'] = tot_time
 
     @timing
@@ -929,3 +932,4 @@ class PCAP:
         """
         _, tot_time = self._label_flows(label_file, label)
         self.label_flows.__dict__['tot_time'] = tot_time
+

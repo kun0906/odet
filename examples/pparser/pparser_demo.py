@@ -6,7 +6,7 @@
 # License: xxx
 import os
 
-from pparser.parser import PCAP
+from odet.pparser.parser import PCAP
 from utils.tool import dump_data
 
 RANDOM_STATE = 42

@@ -5,10 +5,12 @@
         includes all documents (such as APIs)
     - examples/: 
         includes toy examples and datasets for you to play with it 
-    - ndm/: 
-        includes different detection models (such as OCSVM)
-    - pparser/: 
-        includes pcap propcess (feature extraction from pcap) 
+    - odet/: 
+        source codes: includes two sublibraries (pparser and ndm)
+        - ndm/: 
+            includes different detection models (such as OCSVM)
+        - pparser/: 
+            includes pcap propcess (feature extraction from pcap) 
     - scripts/: 
         others (such as xxx.sh, make) 
     - tests/: 
@@ -26,8 +28,8 @@
     
 # How to install?
 ```
-    python3 setup.py build
-    python3 setup.py install
+    pip3 install . 
+    (pip3 will call setup.py to install the library automatically)
 ```
 
 
@@ -36,8 +38,8 @@
 ```python3
     import os
 
-    from pparser.parser import PCAP
-    from utils import dump_data
+    from odet.pparser.parser import PCAP
+    from odet.utils import dump_data
     
     RANDOM_STATE = 42
     
@@ -70,9 +72,9 @@
 
     from sklearn.model_selection import train_test_split
     
-    from ndm.model import MODEL
-    from ndm.ocsvm import OCSVM
-    from utils.tool import dump_data, load_data
+    from odet.ndm.model import MODEL
+    from odet.ndm.ocsvm import OCSVM
+    from odet.utils.tool import dump_data, load_data
     
     RANDOM_STATE = 42
 
@@ -107,10 +109,8 @@
 # TODO
 The current version just implements basic functions. We still need to further evaluate and optimize them continually. 
 - Evaluate 'pparser' performance on different pcaps
-- Add setup.py for 'install'
 - Add 'test' cases
 - Add license
-- Add more examples
 - Generated docs from docs-string automatically
 
 

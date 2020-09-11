@@ -1,14 +1,30 @@
 """Setup.py
-    python3 setup.py build
-    python3 setup.py install
+    pip3 install .
+    # python3 setup.py build
+    # python3 setup.py install
+
+
 """
 # Authors: kun.bj@outlook.com
 #
 # License: xxx
 import os
+import shutil
 
 from setuptools import find_packages
 from setuptools import setup
+
+build_dir = './build'
+if os.path.exists(build_dir):
+    shutil.rmtree(build_dir)
+
+APP_NAME = 'odet'
+examples_dir = os.path.join(APP_NAME, 'examples')
+tests_dir = os.path.join(APP_NAME, 'tests')
+install_examples = True
+if install_examples:
+    if not os.path.exists(examples_dir): shutil.copytree('examples', examples_dir)
+    if not os.path.exists(tests_dir): shutil.copytree('tests', tests_dir)
 
 
 def read(readme_file):
@@ -27,7 +43,7 @@ def read(readme_file):
     return str(value)
 
 
-setup(name='odet',
+setup(name=APP_NAME,
       version='0.0.1',
       description='Novelty Detection',
       long_description=read('readme.md'),
@@ -38,19 +54,22 @@ setup(name='odet',
       url='https://github.com/Learn-Live/odet',
       download_url='https://github.com/Learn-Live/odet',
       license='xxx',
-      python_requires='==3.7.3',
-      install_requires=['numpy==1.18.3',
-                        'scipy==1.4.1',
-                        'pandas==0.25.1',
-                        'scapy==2.4.3',
-                        'scikit-learn==0.21.3'
+      python_requires='>=3.7.3',
+      install_requires=['numpy>=1.18.3',
+                        'scipy>=1.4.1',
+                        'pandas>=0.25.1',
+                        'scapy>=2.4.3',
+                        'scikit-learn>=0.21.3'
                         ],
       extras_require={
-          'visualize': ['matplotlib==3.2.1'],
-          'tests': ['pytest==5.3.1',
-                    'requests==2.22.0'
+          'visualize': ['matplotlib>=3.2.1'],
+          'tests': ['pytest>=5.3.1',
+                    'requests>=2.22.0',
                     ],
       },
+      # scripts=[
+      #     'scripts/docs.sh',
+      # ],
       classifiers=[
           'Development Status :: 5 - Production/Stable',
           'Intended Audience :: Developers',
@@ -63,4 +82,16 @@ setup(name='odet',
           'Topic :: Software Development :: Libraries :: Python Modules'
       ],
       # automatically find the packages with __init__.py file and start from the setup.py's directory
-      packages=find_packages())
+      packages=find_packages(where='.', exclude=('tests*', 'examples*')),  # include all packages under src
+      # packages =find_packages('.odet'),
+      # package_dir={'': '.'},  # tell distutils packages are under src
+      # package_data={"odet": ['*.pcap', '*.csv']},
+      #         include_package_data=True,
+      # setup_requires=['flake8'],
+      )
+
+# clean data
+if os.path.exists(examples_dir): shutil.rmtree(examples_dir)
+if os.path.exists(tests_dir): shutil.rmtree(tests_dir)
+if os.path.exists(build_dir): shutil.rmtree(build_dir)
+if os.path.exists(f'{APP_NAME}.egg-info'): shutil.rmtree(f'{APP_NAME}.egg-info')
