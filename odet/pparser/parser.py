@@ -14,7 +14,7 @@ from scapy.all import *
 from scapy.layers.inet import IP, TCP, UDP
 from sklearn.utils import shuffle
 
-from kjl.utils.tool import data_info, timing
+from odet.utils.tool import data_info, timing
 
 
 def _get_fid(pkt):
@@ -77,7 +77,7 @@ def _pcap2flows(pcap_file, flow_pkts_thres=2, *, tcp_timeout=600, udp_timeout=60
     pcap_file: str
         a pcap needed to processed.
 
-    flow_ptks_thres: int (default is 2)
+    flow_pkts_thres: int (default is 2)
         the minimum number of packets of each flow is to control which flow should be kept
         and which one should be discarded. The default value is 2, i.e., all the flows which have less than 2 packets
         are discarded. It must be >= 2.
@@ -198,7 +198,7 @@ def _pcap2flows(pcap_file, flow_pkts_thres=2, *, tcp_timeout=600, udp_timeout=60
     return new_flows
 
 
-def _flows2subflows(flows, interval=10, *, flow_pkts_thres=2, verbose=1):
+def _flows2subflows(flows, interval=10, *, labels='', flow_pkts_thres=2, verbose=1):
     """Split flows to subflows by interval
 
     Parameters
@@ -209,7 +209,7 @@ def _flows2subflows(flows, interval=10, *, flow_pkts_thres=2, verbose=1):
     interval: float (default is 5.0s)
        a window is to split each flow
 
-    flow_ptks_thres: int (default is 2)
+    flow_pkts_thres: int (default is 2)
         the minimum number of packets of each flow is to control which flow should be kept
         and which one should be discarded. The default value is 2, i.e., all the flows which have less than 2 packets
         are discarded. It must be >= 2.
@@ -221,11 +221,12 @@ def _flows2subflows(flows, interval=10, *, flow_pkts_thres=2, verbose=1):
     Returns
     -------
     subflows: list
-        each of subflow has at least "flow_ptks_thres" packets
+        each of subflow has at least "flow_pkts_thres" packets
     """
 
     new_flows = []  # store all subflows
-    for i, (fid, pkts) in enumerate(flows):
+    new_labels = []
+    for i, ((fid, pkts), label) in enumerate(zip(flows, labels)):
         if (verbose > 3) and (i % 1000) == 0:
             print(f'{i}th_flow: len(pkts): {len(pkts)}')
 
@@ -275,20 +276,24 @@ def _flows2subflows(flows, interval=10, *, flow_pkts_thres=2, verbose=1):
             pass
 
         new_flows.extend(subflows)
+        new_labels.extend([label] * len(subflows))
 
     # sort all flows by packet arrival time, each flow must have at least two packets
     subflows = []
-    for fid, subflow_tmp in new_flows:
+    sublabels = []
+    for (fid, subflow_tmp), label in zip(new_flows, new_labels):
         if len(subflow_tmp) < max(2, flow_pkts_thres):
             continue
         subflows.append((fid, [pkt for pkt_time, pkt in subflow_tmp]))
+        sublabels.append(label)
 
     new_flows = subflows
+    new_labels = sublabels
     if verbose > 1:
         print(f'After splitting flows, the number of subflows: {len(new_flows)} and each of them has at least '
               f'{flow_pkts_thres} packets.')
 
-    return new_flows
+    return new_flows, new_labels
 
 
 def _get_header_features(flows):
@@ -645,7 +650,7 @@ def _get_FFT_data(features, fft_bin='', fft_part='real'):
 
 
 class PCAP:
-    def __init__(self, pcap_file='xxx.pcap', *, flow_ptks_thres=2, verbose=10, random_state=42):
+    def __init__(self, pcap_file='xxx.pcap', *, flow_pkts_thres=2, verbose=10, random_state=42):
         """PCAP includes all processing functions of pcaps, such as pcap2flows, flow2features, and label_flows .
 
         Parameters
@@ -653,7 +658,7 @@ class PCAP:
         pcap_file: str
             a pcap needed to processed.
 
-        flow_ptks_thres: int (default is 2)
+        flow_pkts_thres: int (default is 2)
             the minimum number of packets of each flow is to control which flow should be kept
             and which one should be discarded. The default value is 2, i.e., all the flows which have less than 2 packets
             are discarded. It must be >= 2.
@@ -671,12 +676,51 @@ class PCAP:
         """
 
         self.pcap_file = pcap_file
-        self.flow_ptks_thres = flow_ptks_thres
+        self.flow_pkts_thres = flow_pkts_thres
         self.verbose = verbose
         self.random_state = random_state
 
     @timing
-    def _pcap2flows(self, interval=0, q_interval=0.1, *, tcp_timeout=600, udp_timeout=600):
+    def _pcap2flows(self, tcp_timeout=600, udp_timeout=600):
+        """Extract flows from the given pcap.
+
+        Parameters
+        ----------
+        tcp_timeout: int (default is 600s)
+            a value is to split flow by tcp_timeout.
+
+        udp_timeout: int (default is 600s)
+            a value is to split flow by udp_timeout.
+
+        Returns
+        -------
+        all flows: list
+            each element in the list represents a flow, and each flow includes 2 values: flow id (five-tuple) and packets.
+        """
+
+        # extract all flows firstly and then split flows to subflows
+        self.flows = _pcap2flows(self.pcap_file, self.flow_pkts_thres, tcp_timeout=tcp_timeout, udp_timeout=udp_timeout,
+                                 verbose=self.verbose)
+
+    def pcap2flows(self, tcp_timeout=600, udp_timeout=600):
+        """Extract flows from the given pcap.
+
+        Parameters
+        ----------
+        tcp_timeout: int (default is 600s)
+            a value is to split flow by tcp_timeout.
+
+        udp_timeout: int (default is 600s)
+            a value is to split flow by udp_timeout.
+        Returns
+        -------
+            self
+        """
+        _, tot_time = self._pcap2flows(tcp_timeout=tcp_timeout, udp_timeout=udp_timeout)
+        self.pcap2flows.__dict__['tot_time'] = tot_time
+
+    @timing
+    def _flows2subflows(self, interval=0, q_interval=0.1, *, tcp_timeout=600, udp_timeout=600):
         """Extract flows from the given pcap and split each flow to subflow by "interval" or "q_interval".
                    It prefers to choose "interval" as the split measure if interval > 0; otherwise, use q_interval to find an interval.
                     q_interval must be in [0, 1]
@@ -701,17 +745,13 @@ class PCAP:
             each element in the list represents a flow, and each flow includes 2 values: flow id (five-tuple) and packets.
         """
 
-        # extract all flows firstly and then split flows to subflows
-        flows = _pcap2flows(self.pcap_file, self.flow_ptks_thres, tcp_timeout=tcp_timeout, udp_timeout=udp_timeout,
-                            verbose=self.verbose)
-
         if interval > 0:
             self.interval = interval
         else:
             if q_interval > 0:
                 self.q_interval = q_interval
 
-                self.flow_durations = [_get_flow_duration(pkts) for fid, pkts in flows]
+                self.flow_durations = [_get_flow_duration(pkts) for fid, pkts in self.flows]
                 if self.verbose > 3:
                     data_info(np.asarray(self.flow_durations, dtype=float).reshape(-1, 1), name='flow_durations')
                 self.interval = _get_split_interval(self.flow_durations, q_interval=self.q_interval)
@@ -720,9 +760,10 @@ class PCAP:
                 msg = f'q_interval must be in [0, 1]! Current q_interval is {q_interval}.'
                 raise ValueError(msg)
 
-        self.flows = _flows2subflows(flows, self.interval, flow_pkts_thres=self.flow_ptks_thres, verbose=self.verbose)
+        self.flows, self.labels = _flows2subflows(self.flows, self.interval, labels=self.labels,
+                                                  flow_pkts_thres=self.flow_pkts_thres, verbose=self.verbose)
 
-    def pcap2flows(self, interval=0.0, q_interval=0.9, *, tcp_timeout=600, udp_timeout=600):
+    def flows2subflows(self, interval=0.0, q_interval=0.9, *, tcp_timeout=600, udp_timeout=600):
         """Extract flows from the given pcap and split each flow to subflow by "interval" or "q_interval".
            It prefers to choose "interval" as the split measure if interval > 0; otherwise, use q_interval to find an interval.
             q_interval must be in [0, 1]
@@ -744,8 +785,8 @@ class PCAP:
         -------
             self
         """
-        _, tot_time = self._pcap2flows(interval, q_interval, tcp_timeout=tcp_timeout, udp_timeout=udp_timeout)
-        self.pcap2flows.__dict__['tot_time'] = tot_time
+        _, tot_time = self._flows2subflows(interval, q_interval, tcp_timeout=tcp_timeout, udp_timeout=udp_timeout)
+        self.flows2subflows.__dict__['tot_time'] = tot_time
 
     @timing
     def _flow2features(self, feat_type='IAT', *, fft=False, header=False, dim=None):
@@ -882,10 +923,10 @@ class PCAP:
                 # ensure all 5-tuple flows have same label
                 label_i = row[" Label"].upper()
                 if label_i in NORMAL_LABELS:
-                    label_i = 0
+                    label_i = 'normal'
                     cnt_nomral += 1
                 else:
-                    label_i = 1
+                    label_i = 'abnormal'
                     cnt_anomaly += 1
 
                 # it will overwrite the previous label for the same fid.
@@ -911,7 +952,7 @@ class PCAP:
         else:
             self.labels = [label] * len(self.flows)
 
-        self.labels = np.asarray(self.labels, dtype=int)
+        self.labels = np.asarray(self.labels, dtype=str)
 
     def label_flows(self, label_file=None, label=0):
         """label each flow by label_file (only for CICIDS_2017 label_file) or label.
@@ -933,3 +974,5 @@ class PCAP:
         _, tot_time = self._label_flows(label_file, label)
         self.label_flows.__dict__['tot_time'] = tot_time
 
+    def update_flow(self):
+        pass

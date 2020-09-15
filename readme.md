@@ -48,10 +48,12 @@
 
     # extract flows from pcap
     pp.pcap2flows(q_interval=0.9)
-
     # label each flow with a label
     label_file = 'data/demo.csv'
     pp.label_flows(label_file=label_file)
+
+    # flows to subflows
+    pp.flows2subflows(q_interval=0.9)
 
     # extract features from each flow given feat_type
     feat_type = 'IAT'
@@ -62,7 +64,7 @@
     out_dir = os.path.join('out', os.path.dirname(pcap_file))
     dump_data((X, y), out_file=f'{out_dir}/demo_{feat_type}.dat')
 
-    print(pp.features.shape, pp.pcap2flows.tot_time, pp.flow2features.tot_time)
+    print(pp.features.shape, pp.pcap2flows.tot_time, pp.flows2subflows.tot_time, pp.flow2features.tot_time)
 
 ```
 
