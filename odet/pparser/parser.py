@@ -1,5 +1,11 @@
 """PCAP parser
 'pparser' parses pcaps to flow features by Scapy.
+
+Note: Scapy version must be >=2.4.4; If not, pickle packets that will lost meta info (such as, pkt.time and wirelen)
+Reference:
+    https://github.com/secdev/scapy/issues/2648
+    (Pickling corrupts timestamp (pkt.time) and order of packets #2648)
+
 """
 # Authors: kun.bj@outlook.com
 #

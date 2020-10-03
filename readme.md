@@ -47,7 +47,7 @@
     pp = PCAP(pcap_file, flow_ptks_thres=2, verbose=10, random_state=RANDOM_STATE)
 
     # extract flows from pcap
-    pp.pcap2flows(q_interval=0.9)
+    pp.pcap2flows()
     # label each flow with a label
     label_file = 'data/demo.csv'
     pp.label_flows(label_file=label_file)
