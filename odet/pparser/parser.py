@@ -345,9 +345,12 @@ def _get_header_features(flows):
         flgs_lst = np.zeros((8, 1))  # 8 TCP flags
         header_features = []
         for i, pkt in enumerate(pkts):
-            if pkt.payload.proto == 6:  # tcp
-                flgs_lst += np.asarray(_parse_tcp_flgs(pkt.payload.payload.flags)).reshape(-1, 1)  # parses tcp.flgs
-            header_features.append(pkt.payload.ttl)
+            try:
+                if pkt.payload.proto == 6:  # tcp
+                    flgs_lst += np.asarray(_parse_tcp_flgs(pkt.payload.payload.flags)).reshape(-1, 1)  # parses tcp.flgs
+                header_features.append(pkt.payload.ttl)
+            except Exception as e:
+                print(f"Error: pkt.payload.proto: {e}")
 
         features.append(list(flgs_lst.flatten()) + header_features)
 
