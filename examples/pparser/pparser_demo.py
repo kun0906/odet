@@ -7,7 +7,7 @@
 import os
 
 from odet.pparser.parser import PCAP
-from odet.utils.tool import dump_data
+from odet.utils.tool import dump
 
 RANDOM_STATE = 42
 
@@ -34,7 +34,7 @@ def main():
     # dump data to disk
     X, y = pp.features, pp.labels
     out_dir = os.path.join('out', os.path.dirname(pcap_file))
-    dump_data((X, y), out_file=f'{out_dir}/demo_{feat_type}.dat')
+    dump((X, y), out_file=f'{out_dir}/demo_{feat_type}.dat')
 
     print(pp.features.shape, pp.pcap2flows.tot_time, pp.flows2subflows.tot_time, pp.flow2features.tot_time)
 

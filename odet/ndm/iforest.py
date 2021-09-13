@@ -5,7 +5,6 @@
 #
 # XXX
 from pyod.models.iforest import IForest
-from pyod.utils import invert_order
 
 
 class IF(IForest):
@@ -87,8 +86,7 @@ class IF(IForest):
         anomaly_scores : numpy array of shape (n_samples,)
             The anomaly score of the input samples.
         """
-        # invert outlier scores. Outliers comes with higher outlier scores
-        return invert_order(self.model_.decision_function(X))
+        return self.model_.decision_function(X)
 
     def predict_proba(self, X):
         raise NotImplementedError

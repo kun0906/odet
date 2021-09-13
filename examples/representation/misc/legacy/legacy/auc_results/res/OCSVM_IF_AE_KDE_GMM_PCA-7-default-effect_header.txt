@@ -1,0 +1,93 @@
+Detector & Dataset & STATS & SIZE & IAT & SAMP-NUM
+\toprule
+\multirow{12}{*}{~\rule{0pt}{2.7ex}OCSVM} & UNB(PC1) & 0.48 & 0.42 & 0.72 & 0.76 \\ 
+ \cmidrule{2-6}
+ & UNB(PC4) & 0.55 & 0.62 & 0.86 & 0.75 \\ 
+ \cmidrule{2-6}
+ & CTU & 0.54 & 0.77 & 0.75 & 0.85 \\ 
+ \cmidrule{2-6}
+ & MAWI & 0.28 & 0.28 & 0.41 & 0.58 \\ 
+ \cmidrule{2-6}
+ & TV&RT & 1.00 & 1.00 & 0.95 & 0.68 \\ 
+ \cmidrule{2-6}
+ & SFrig & 0.88 & 0.90 & 0.77 & 0.95 \\ 
+ \cmidrule{2-6}
+ & BSTch & 0.97 & 0.97 & 0.93 & 0.92 \\ 
+ \cmidrule{2-6}
+\midrule
+\multirow{12}{*}{~\rule{0pt}{2.7ex}IF} & UNB(PC1) & 0.42 & 0.52 & 0.61 & 0.77 \\ 
+ \cmidrule{2-6}
+ & UNB(PC4) & 0.48 & 0.51 & 0.69 & 0.79 \\ 
+ \cmidrule{2-6}
+ & CTU & 0.77 & 0.77 & 0.86 & 0.90 \\ 
+ \cmidrule{2-6}
+ & MAWI & 0.86 & 0.68 & 0.42 & 0.62 \\ 
+ \cmidrule{2-6}
+ & TV&RT & 0.95 & 0.98 & 0.90 & 0.74 \\ 
+ \cmidrule{2-6}
+ & SFrig & 0.96 & 0.95 & 0.57 & 0.94 \\ 
+ \cmidrule{2-6}
+ & BSTch & 0.94 & 0.98 & 0.94 & 0.96 \\ 
+ \cmidrule{2-6}
+\midrule
+\multirow{12}{*}{~\rule{0pt}{2.7ex}AE} & UNB(PC1) & 0.45 & 0.57 & 0.65 & 0.78 \\ 
+ \cmidrule{2-6}
+ & UNB(PC4) & 0.80 & 0.41 & 0.37 & 0.77 \\ 
+ \cmidrule{2-6}
+ & CTU & 0.29 & 0.72 & 0.86 & 0.83 \\ 
+ \cmidrule{2-6}
+ & MAWI & 0.39 & 0.48 & 0.43 & 0.60 \\ 
+ \cmidrule{2-6}
+ & TV&RT & 1.00 & 1.00 & 0.95 & 0.76 \\ 
+ \cmidrule{2-6}
+ & SFrig & 0.94 & 0.72 & 0.72 & 0.96 \\ 
+ \cmidrule{2-6}
+ & BSTch & 0.95 & 0.87 & 0.97 & 0.96 \\ 
+ \cmidrule{2-6}
+\midrule
+\multirow{12}{*}{~\rule{0pt}{2.7ex}KDE} & UNB(PC1) & 0.21 & 0.54 & 0.69 & 0.73 \\ 
+ \cmidrule{2-6}
+ & UNB(PC4) & 0.37 & 0.62 & 0.86 & 0.74 \\ 
+ \cmidrule{2-6}
+ & CTU & 0.75 & 0.73 & 0.76 & 0.92 \\ 
+ \cmidrule{2-6}
+ & MAWI & 0.66 & 0.49 & 0.39 & 0.58 \\ 
+ \cmidrule{2-6}
+ & TV&RT & 1.00 & 1.00 & 0.95 & 0.67 \\ 
+ \cmidrule{2-6}
+ & SFrig & 0.94 & 0.91 & 0.74 & 0.95 \\ 
+ \cmidrule{2-6}
+ & BSTch & 0.96 & 0.96 & 0.94 & 0.91 \\ 
+ \cmidrule{2-6}
+\midrule
+\multirow{12}{*}{~\rule{0pt}{2.7ex}GMM} & UNB(PC1) & 0.36 & 0.22 & 0.62 & 0.79 \\ 
+ \cmidrule{2-6}
+ & UNB(PC4) & 0.54 & 0.59 & 0.65 & 0.82 \\ 
+ \cmidrule{2-6}
+ & CTU & 0.69 & 0.70 & 0.52 & 0.89 \\ 
+ \cmidrule{2-6}
+ & MAWI & 0.66 & 0.40 & 0.48 & 0.62 \\ 
+ \cmidrule{2-6}
+ & TV&RT & 0.99 & 0.93 & 0.90 & 0.90 \\ 
+ \cmidrule{2-6}
+ & SFrig & 0.79 & 0.91 & 0.69 & 0.96 \\ 
+ \cmidrule{2-6}
+ & BSTch & 0.94 & 0.08 & 0.93 & 0.96 \\ 
+ \cmidrule{2-6}
+\midrule
+\multirow{12}{*}{~\rule{0pt}{2.7ex}PCA} & UNB(PC1) & 0.33 & 0.21 & 0.30 & 0.72 \\ 
+ \cmidrule{2-6}
+ & UNB(PC4) & 0.42 & 0.27 & 0.54 & 0.70 \\ 
+ \cmidrule{2-6}
+ & CTU & 0.69 & 0.70 & 0.74 & 0.89 \\ 
+ \cmidrule{2-6}
+ & MAWI & 0.66 & 0.40 & 0.40 & 0.58 \\ 
+ \cmidrule{2-6}
+ & TV&RT & 0.99 & 0.99 & 0.96 & 0.61 \\ 
+ \cmidrule{2-6}
+ & SFrig & 0.79 & 0.90 & 0.69 & 0.95 \\ 
+ \cmidrule{2-6}
+ & BSTch & 0.97 & 0.08 & 0.92 & 0.95 \\ 
+ \cmidrule{2-6}
+\midrule
+\bottomrule
