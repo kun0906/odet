@@ -1,6 +1,6 @@
 """Capture packets by Scapy
 
-    pip3 install netifaces
+    python3.7 examples/capture/capture_pkts.py
 """
 # Authors: kun.bj@outlook.com
 #

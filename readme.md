@@ -11,14 +11,14 @@
             includes different detection models (such as OCSVM)
         - pparser/: 
             includes pcap propcess (feature extraction from pcap) 
+         - utils/: 
+            includes common functions (such as load data and dump data)
+        - visul/: 
+            includes visualization functions
     - scripts/: 
         others (such as xxx.sh, make) 
     - tests/: 
         includes test cases
-    - utils/: 
-        includes common functions (such as load data and dump data)
-    - visul/: 
-        includes visualization functions
     - LICENSE.txt
     - readme.md
     - requirements.txt
@@ -27,9 +27,8 @@
    
     
 # How to install?
-```
-    pip3 install . 
-    (pip3 will call setup.py to install the library automatically)
+```sh
+    pip3 install odet
 ```
 
 
@@ -39,17 +38,17 @@
     import os
 
     from odet.pparser.parser import PCAP
-    from odet.utils import dump_data
+    from odet.utils.tool import dump
     
     RANDOM_STATE = 42
     
-    pcap_file = 'data/demo.pcap'
+    pcap_file = 'examples/data/demo.pcap'
     pp = PCAP(pcap_file, flow_ptks_thres=2, verbose=10, random_state=RANDOM_STATE)
 
     # extract flows from pcap
     pp.pcap2flows()
     # label each flow with a label
-    label_file = 'data/demo.csv'
+    label_file = 'examples/data/demo.csv'
     pp.label_flows(label_file=label_file)
 
     # flows to subflows
@@ -62,7 +61,7 @@
     # dump data to disk
     X, y = pp.features, pp.labels
     out_dir = os.path.join('out', os.path.dirname(pcap_file))
-    dump_data((X, y), out_file=f'{out_dir}/demo_{feat_type}.dat')
+    dump((X, y), out_file=f'{out_dir}/demo_{feat_type}.dat')
 
     print(pp.features.shape, pp.pcap2flows.tot_time, pp.flows2subflows.tot_time, pp.flow2features.tot_time)
 
@@ -76,13 +75,13 @@
     
     from odet.ndm.model import MODEL
     from odet.ndm.ocsvm import OCSVM
-    from odet.utils.tool import dump_data, load_data
+    from odet.utils.tool import dump, load
     
     RANDOM_STATE = 42
 
     # load data
-    data_file = 'out/data/demo_IAT.dat'
-    X, y = load_data(data_file)
+    data_file = 'examples/out/data/demo_IAT.dat'
+    X, y = load(data_file)
     # split train and test test
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=RANDOM_STATE)
 
@@ -99,7 +98,7 @@
 
     # dump data to disk
     out_dir = os.path.dirname(data_file)
-    dump_data((model, ndm.history), out_file=f'{out_dir}/{ndm.model_name}-results.dat')
+    dump((model, ndm.history), out_file=f'{out_dir}/{ndm.model_name}-results.dat')
 
     print(ndm.train.tot_time, ndm.test.tot_time, ndm.score)
 ```

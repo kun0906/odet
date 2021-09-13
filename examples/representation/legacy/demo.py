@@ -2,9 +2,10 @@ import pickle
 from collections import OrderedDict
 
 from scapy.layers.inet import IP
+from scapy.utils import PcapReader
 
-from itod.pparser.pcap import filter_ip, PcapReader
-from itod.utils.tool import get_file_path
+from odet.pparser.parser import filter_ip
+from odet.utils.tool import get_file_path
 
 
 def dump_data(data, output_file='a.dat'):
@@ -23,8 +24,8 @@ def load_data(output_file):
 
 def demo():
     #
-    output_file = '/Users/kunyang/PycharmProjects/itod/examples/data/reprst/UCHI/IOT_2019/smtv_10.42.0.1/-subflow_interval=None_q_flow_duration=0.9'
-    output_file = '/Users/kunyang/PycharmProjects/itod/examples/data/reprst/UCHI/IOT_2019/smtv_10.42.0.1/all-features-header:False.dat'
+    output_file = './examples/data/reprst/UCHI/IOT_2019/smtv_10.42.0.1/-subflow_interval=None_q_flow_duration=0.9'
+    output_file = './examples/data/reprst/UCHI/IOT_2019/smtv_10.42.0.1/all-features-header:False.dat'
     # # data = ([1,2], [1,3], 'a')
     # # dump_data(data, out_file='a.dat')
     load_data(output_file)

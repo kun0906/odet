@@ -1,9 +1,5 @@
-"""Setup.py
-    pip3 install .
-    # python3 setup.py build
-    # python3 setup.py install
-
-
+"""Installation
+    pip3 install odet
 """
 # Authors: kun.bj@outlook.com
 #
@@ -51,22 +47,22 @@ setup(name=APP_NAME,
       long_description_content_type="text/markdown",
       author='Kun',
       author_email='kun.bj@outlook.com',
-      url='https://github.com/Learn-Live/odet',
-      download_url='https://github.com/Learn-Live/odet',
+      url='https://github.com/kun-88/odet',
+      download_url='https://github.com/kun-88/odet',
       license='xxx',
-      python_requires='>=3.6.3',
-      install_requires=['numpy>=1.18.3',
-                        'scipy>=1.4.1',
-                        'pandas>=0.25.1',
-                        'scapy>=2.4.3',
-                        'scikit-learn>=0.21.3'
-                        ],
-      extras_require={
-          'visualize': ['matplotlib>=3.2.1'],
-          'tests': ['pytest>=5.3.1',
-                    'requests>=2.22.0',
-                    ],
-      },
+      python_requires='>=3.7.3',
+      # install_requires=['numpy>=1.18.3',
+      #                   'scipy>=1.4.1',
+      #                   'pandas>=0.25.1',
+      #                   'scapy>=2.4.3',
+      #                   'scikit-learn>=0.21.3'
+      #                   ],
+      # extras_require={
+      #     'visualize': ['matplotlib>=3.2.1'],
+      #     'tests': ['pytest>=5.3.1',
+      #               'requests>=2.22.0',
+      #               ],
+      # },
       # scripts=[
       #     'scripts/docs.sh',
       # ],
@@ -77,12 +73,12 @@ setup(name=APP_NAME,
           'Intended Audience :: Science/Research',
           'License :: OSI Approved :: Python Software Foundation License',
           'Programming Language :: Python :: 3',
-          'Programming Language :: Python :: 3.6',
+          'Programming Language :: Python :: 3.7',
           'Topic :: Software Development :: Libraries',
           'Topic :: Software Development :: Libraries :: Python Modules'
       ],
       # automatically find the packages with __init__.py file and start from the setup.py's directory
-      packages=find_packages(where='.', exclude=('tests*', 'examples*')),  # include all packages under src
+      packages=find_packages(where='.', exclude=('tests*', 'examples*')),  # include all packages under .
       # packages =find_packages('.odet'),
       # package_dir={'': '.'},  # tell distutils packages are under src
       # package_data={"odet": ['*.pcap', '*.csv']},

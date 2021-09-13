@@ -1,5 +1,6 @@
 """A demo for parsing pcap and labelling the extracted flows.
 
+    python3.7 examples/pparser/pparser_demo.py
 """
 # Authors: kun.bj@outlook.com
 #

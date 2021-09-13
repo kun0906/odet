@@ -1,5 +1,6 @@
 """A demo for detecting novelty with a model learned from given data.
 
+    python3.7 examples/ndm/ndm_demo.py
 """
 # Authors: kun.bj@outlook.com
 #
