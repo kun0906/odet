@@ -8,7 +8,7 @@
 from sklearn import metrics
 from sklearn.metrics import roc_curve
 
-from odet.utils.tool import timing
+from odet.utils.tool import timer
 
 
 class MODEL:
@@ -43,7 +43,7 @@ class MODEL:
         # store all data generated during training and testing the model.
         self.history = {}
 
-    @timing
+    @timer
     def _train(self, X_train, y_train=None):
         """fit the model on the train set
 
@@ -78,7 +78,7 @@ class MODEL:
         _, tot_time = self._train(X_train, y_train)
         self.train.__dict__['tot_time'] = tot_time
 
-    @timing
+    @timer
     def _test(self, X_test, y_test):
         """Evaluate the model on the test set
 

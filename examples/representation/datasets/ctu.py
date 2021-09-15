@@ -7,13 +7,11 @@
 
 import os
 
-import numpy as np
 from loguru import logger as lg
 
 from odet.datasets._base import Base
-from odet.pparser.parser import filter_ip, _pcap2flows, _flows2subflows, \
-	_get_flow_duration
-from odet.utils.tool import load, get_file_path, check_path, dump, timer, remove_file
+from odet.pparser.parser import filter_ip, _pcap2flows
+from odet.utils.tool import load, get_file_path, check_path, dump, remove_file
 
 
 class CTU(Base):
@@ -102,4 +100,3 @@ class CTU(Base):
 		        'normal_pcap': self.normal_pcap, 'abnormal_pcap': self.abnormal_pcap,
 		        'direction': direction, 'in_dir': in_dir}
 		return meta
-

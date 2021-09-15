@@ -2,7 +2,7 @@
 
 	Instructions:
 		# Note: run the below command under the root directory of the project.
-		python3.7 main_representation.py
+		PYTHONPATH=. python3.7 examples/representation/main_representation1.py
 
 """
 # Email: kun.bj@outlook.com
@@ -23,11 +23,11 @@ OUT_DIR = r'examples/representation/out'
 demo = True
 if demo:
 	DATASETS = ['UCHI(SCAM_2019)']
-	# FEATURES = ['SAMP_NUM']
+	FEATURES = ['IAT']
 	# FEATURES += ['FFT_' + v for v in FEATURES]
-	# HEADER = [False]
-	MODELS = ['AE']
-	# TUNING = [False]
+	HEADER = [True]
+	MODELS = ['PCA']
+	TUNING = [False]
 
 	# DATASETS = [
 	# 	'UNB(PC1)', 'UNB(PC2)', 'UNB(PC3)', 'UNB(PC4)',
@@ -37,17 +37,17 @@ if demo:
 	# 	'UCHI(SFRIG_2021)',
 	# 	'UCHI(SMTV_2019)', 'UCHI(GHOME_2019)', 'UCHI(SCAM_2019)', 'UCHI(BSTCH_2019)'
 	# ]
-	FEATURES = [
-		'IAT',
-		'SIZE', 'IAT+SIZE',
-		'STATS',
-		'SAMP_NUM',
-		'SAMP_SIZE'
-	]
-	FEATURES += ['FFT_' + v for v in FEATURES]
-	# MODELS = ['OCSVM', 'GMM', 'PCA', 'KDE', 'IF']
-	HEADER = [False, True]
-	TUNING = [True, False]
+	# FEATURES = [
+	# 	'IAT',
+	# 	'SIZE', 'IAT+SIZE',
+	# 	'STATS',
+	# 	'SAMP_NUM',
+	# 	'SAMP_SIZE'
+	# ]
+	# FEATURES += ['FFT_' + v for v in FEATURES]
+	# # MODELS = ['OCSVM', 'GMM', 'PCA', 'KDE', 'IF']
+	# HEADER = [False, True]
+	# TUNING = [False, True]
 else:
 	pass
 

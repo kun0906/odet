@@ -2,7 +2,7 @@
 
 	Instructions:
 		# Note: run the below command under the root directory of the project.
-		python3.7 examples/representation/main_representation.py
+		PYTHONPATH=. python3.7 examples/representation/main_representation.py
 
 """
 # Email: kun.bj@outlook.com
@@ -20,7 +20,7 @@ from examples.representation._gather import gather
 
 RESULT_DIR = f'results/{START_TIME}'
 OUT_DIR = r'examples/representation/out'
-demo = True
+demo = False
 if demo:
 	# DATASETS = ['UNB(PC5)']
 	# FEATURES = ['SIZE']
@@ -46,6 +46,7 @@ if demo:
 	]
 	FEATURES += ['FFT_' + v for v in FEATURES]
 	HEADER = [False, True]
+	MODELS = ['OCSVM', 'GMM', 'AE', 'PCA', 'KDE', 'IF']
 	TUNING = [False, True]
 else:
 	pass

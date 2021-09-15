@@ -2,7 +2,7 @@
 
 	Instructions:
 		# Note: run the below command under the root directory of the project.
-		python3.7 examples/representation/report/paper_tables.py
+		PYTHONPATH=. python3.7 examples/representation/report/paper_tables.py
 
 """
 # Email: kun.bj@outlook.com
@@ -18,7 +18,7 @@ from representation._constants import data_orig2name
 from representation.report.paper_plots import parse_csv, format_name
 
 
-def form_dim_table(data, header, tuning, features = [], datasets=[], model=''):
+def form_dim_table(data, header, tuning, features=[], datasets=[], model=''):
 	"""form dataset table in the paper
 
 	Parameters
@@ -35,7 +35,7 @@ def form_dim_table(data, header, tuning, features = [], datasets=[], model=''):
 
 	"""
 	result = []
-	result.append(['device'] + features)
+	result.append(['Device'] + features)
 	for dataset in datasets:
 		vs = []
 		for feature in features:
@@ -52,7 +52,7 @@ def form_dim_table(data, header, tuning, features = [], datasets=[], model=''):
 	return result
 
 
-def form_dataset_table(data, header, tuning, feature = [], datasets=[], model=''):
+def form_dataset_table(data, header, tuning, feature=[], datasets=[], model=''):
 	"""form dataset table in the paper
 
 	Parameters
@@ -122,6 +122,48 @@ def form_score_table(data, header, tuning, features, datasets, models):
 	return result
 
 
+def score2latex(data, datasets, out_file=''):
+	"""
+
+	\multirow{7}{*}{OCSVM} &UNB(PC1) & 0.48 & 0.77 & 0.81 & 0.76   \\
+	&UNB(PC4) & 0.55 & 0.73 & 0.86 &  0.75  \\
+	\cmidrule{2-6}
+	&CTU & 0.64 & 0.77 & 0.76 & 0.91\\
+	\cmidrule{2-6}
+	&MAWI & 0.88 & 0.47 & 0.45 & 0.59\\
+	\cmidrule{2-6}
+	&TV\&RT & 1.00 & 1.00 & 0.96 & 0.93 \\
+	\cmidrule{2-6}
+	&SFrig & 0.98 & 0.89 & 0.82  & 0.96  \\
+	&BSTch & 0.95 & 0.98 & 0.97 & 0.95 \\
+	\midrule
+	Parameters
+	----------
+	result
+
+	Returns
+	-------
+
+	"""
+
+	results = []
+	pre = 'Detector'
+	for vs in data:
+		if pre == vs[0]:
+			line = ' & ' + ' & '.join(vs[1:]) + ' \\\\'
+			results.append(line.replace('TV&RT', 'TV\\&RT'))
+			results.append('\\cmidrule{2-6}')
+		else:
+			results[-1] = '\\midrule'
+			pre = vs[0]
+			line = '\multirow{' + str(len(datasets)) + '}{*}{' + pre + '} & ' + ' & '.join(vs[1:]) + ' \\\\'
+			results.append(line.replace('TV&RT', 'TV\\&RT'))
+
+	with open(out_file, 'w') as f:
+		for vs in results:
+			f.write(vs + '\n')
+
+
 def save2txt(data, out_file):
 	with open(out_file, 'w') as f:
 		for vs in data:
@@ -142,6 +184,7 @@ def main():
 
 	"""
 	in_file = 'examples/representation/out/src/results/20210912/short.csv'
+	in_file = 'examples/representation/out/src/results/20210913/short.csv'
 	data = parse_csv(in_file)
 	data = format_name(data, data_orig2name)  #
 	out_dir = 'examples/representation/report/out'
@@ -150,9 +193,9 @@ def main():
 	FEATURES = ['STATS', 'SIZE', 'IAT', 'SAMP_NUM']
 
 	DATASETS1 = ['UNB(PC1)', 'UNB(PC4)', 'CTU', 'MAWI', 'TV&RT', 'SFrig', 'BSTch']
-	DATASETS2 = ['UNB(PC2)', 'UNB(PC3)', 'UNB(PC5)', 'GHom', 'SCam']
-	DATASETS3 = ['UNB(PC1)', 'UNB(PC2)', 'UNB(PC3)', 'UNB(PC4)', 'UNB(PC5)', 'CTU', 'MAWI', 'TV&RT', 'GHom',
-	             'SCam', 'SFrig', 'BSTch']
+	DATASETS2 = ['UNB(PC2)', 'UNB(PC3)', 'UNB(PC5)', 'SCam', 'GHom']
+	DATASETS3 = ['UNB(PC1)', 'UNB(PC2)', 'UNB(PC3)', 'UNB(PC4)', 'UNB(PC5)', 'CTU', 'MAWI', 'TV&RT',  'SFrig', 'BSTch',
+	             'SCam','GHom']
 	# 1. get scores
 	for datasets in [DATASETS1, DATASETS2, DATASETS3]:
 		for tuning in TUNING:
@@ -160,6 +203,7 @@ def main():
 			result = form_score_table(data, 'header_False', tuning, FEATURES, datasets, MODELS)
 			out_file = os.path.join(out_dir, f'{tuning}-{len(datasets)}.csv')
 			save2txt(result, out_file)
+			score2latex(result, datasets, os.path.splitext(out_file)[0] + '-latax.txt')
 			lg.info(f'{tuning}, {datasets}, {out_file}')
 
 	# 2. get dimensions of features
@@ -177,6 +221,7 @@ def main():
 	out_file = os.path.join(out_dir, f'datasets.csv')
 	save2txt(result, out_file)
 	lg.info(f'{tuning}, {datasets}, {out_file}')
+
 
 if __name__ == '__main__':
 	main()

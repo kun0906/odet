@@ -1,20 +1,20 @@
 """Get correlation
 
     Run in the terminal:
-        python3.7 header_correlation.py
+        PYTHONPATH=. python3.7 examples/representation/report/paper_header_correlation.py
 """
-import os
-import sys
-
+# Email: kun.bj@outlook.com
+# Author: kun
+# License: xxx
 import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
 import seaborn as sns
 
-######################################################################################################################
-### add current path to system path
+from examples.representation._constants import *  # should in the top.
 from odet.utils.tool import load, check_path, dump, split_train_val_test, normalize
 
+######################################################################################################################
+### add current path to system path
 lib_path = os.path.abspath('.')
 sys.path.append(lib_path)
 # print(f"add \'{lib_path}\' into sys.path: {sys.path}")
@@ -28,23 +28,22 @@ RANDOM_STATE = 42
 
 
 def _get_each_correlation(x, y):
+	lg.debug(f'{np.std(x)}, {np.std(y)}')
 	rho = np.corrcoef(x, y)[0, 1]
 	rho = 0 if np.isnan(rho) else rho
 	return rho
 
 
-def get_correlation(in_dir='examples/representation/out/src',
-                    out_dir='examples/representation/report/out/src',
+def get_correlation(in_dir='',
+                    datasets='',
+                    feature='SIZE',
+                    header=True,
+                    out_dir='',
                     out_file='.dat'):
-	DATASETS = ['UNB(PC1)',
-	            'CTU',
-	            'MAWI',
-	            'UCHI(SFRIG_2021)']
-
-	feature = 'IAT'  # all the features has the same header
 	corr_results = {}
-	for i, dataset in enumerate(DATASETS):
-		in_file = os.path.join(in_dir, dataset, feature, "header_True", 'Xy.dat')
+	for i, dataset in enumerate(datasets):
+		in_file = os.path.join(in_dir, dataset, feature, f"header_{header}", 'Xy.dat')
+		lg.debug(in_file)
 		data = load(in_file)
 		X_train, y_train, X_val, y_val, X_test, y_test = split_train_val_test(data['X'], data['y'],
 		                                                                      shuffle=True,
@@ -53,34 +52,39 @@ def get_correlation(in_dir='examples/representation/out/src',
 		ss, X_train, y_train, X_val, y_val, X_test, y_test = normalize(X_train, y_train, X_val, y_val, X_test,
 		                                                               y_test)
 		# 2 get correlation
+		dim = X_test.shape[1]
+		if feature == 'IAT':
+			# iat_dim + header_dim = dim, here header_dim =  (8 + ttl_dim (i.e., size_dim))
+			# => iat_dim + 8 + size_dim = iat_dim + 8 + (iat_dim + 1) = dim
+			# => iat_dim = (dim - 9)//2
+			start_idx = (dim - 8 - 1) // 2
+		elif feature == 'SIZE':
+			# size_dim + header_dim = dim
+			# size_dim + (8+size_dim) = dim
+			# size_dim = (dim - 8 ) // 2
+			start_idx = (dim - 8) // 2  # # feature + header_feature:(8 tcp flags + TTL). only works for 'SIZE'
+		else:
+			msg = f'Error: {feature}'
+			raise NotImplementedError(msg)
 		corrs = []
-		for j in range(9):  # the first 9 columns: 8 tcp flags + 1 TTL
-			_corr = _get_each_correlation(X_test[:, j], y_test)
+		lg.debug(f'header_feature_start_idx: {start_idx}')
+		for j in range(9):  # feature + header_feature:(8 tcp flags + first TTL)
+			_corr = _get_each_correlation(X_test[:, start_idx + j], y_test)
 			corrs.append(_corr)
 		corr_results[(in_file, dataset, feature, X_test.shape)] = corrs
 
 		_out_file = os.path.join(out_dir, dataset, 'correlation.dat')
 		check_path(_out_file)
 		dump(corrs, _out_file)
-
+		print(_out_file)
 	# save all results
+	check_path(out_file)
 	dump(corr_results, out_file)
 
 	return out_file
 
 
-#
-# data_name2orig = {v:k for k, v in data_orig2name.items()}
-
-
-dataname_mp = {'UNB(PC1)': 'UNB(PC1)',
-               'CTU': 'CTU',
-               'MAWI': 'MAWI',
-               'UCHI(SFRIG_2021)': 'SFRIG',
-               }
-
-
-def plot_correlation_multi(corr_results, out_dir, title=None, show=True):
+def plot_correlation_multi(corr_results, out_file='', title=None, show=True):
 	""" plot the data
 
 	Parameters
@@ -96,7 +100,7 @@ def plot_correlation_multi(corr_results, out_dir, title=None, show=True):
 	"""
 	# # only show the top 4 figures
 	new_corr_results = {}
-	for i, (dataset, name) in enumerate(dataname_mp.items()):
+	for i, (dataset, name) in enumerate(data_orig2name.items()):
 		for j, (key, corrs) in enumerate(corr_results.items()):
 			_key_path, _dataset, _feat_set, X_test_shape = key
 			if dataset in key:
@@ -119,8 +123,9 @@ def plot_correlation_multi(corr_results, out_dir, title=None, show=True):
 		data = [[f'({HEADER[_i]}, y)', feat_set, corrs[_i]] for _i in data]
 		# print(f"i: {i}, {key}, corrs: {data}")
 
-		new_yerrs = [1 / (np.sqrt(X_test_shape[0]))] * 6  # for err_bar
-		# print(f'i: {i}, {new_yerrs}')
+		new_yerrs = [1 / (np.sqrt(X_test_shape[0]))] * 6  # for the same dataset, it has the same err_bar
+		# # print(f'i: {i}, {new_yerrs}')
+
 		df = pd.DataFrame(data, columns=[f'Xi_y', 'feat_set', 'corr_rho'])
 		if i % cols == 0 and i > 0:
 			t += 1
@@ -176,8 +181,7 @@ def plot_correlation_multi(corr_results, out_dir, title=None, show=True):
 	plt.tight_layout()
 	plt.subplots_adjust(bottom=0.2)
 
-	out_file = os.path.join(out_dir, feat_set, "header:True", 'correlation-bar.pdf')
-	if not os.path.exists(os.path.dirname(out_file)): os.makedirs(os.path.dirname(out_file))
+	check_path(out_file)
 	print(out_file)
 	plt.savefig(out_file)  # should use before plt.show()
 	if show: plt.show()
@@ -188,15 +192,23 @@ def plot_correlation_multi(corr_results, out_dir, title=None, show=True):
 def main():
 	root_dir = 'examples/representation'
 	in_dir = f'{root_dir}/report/out/'
-	corr_file = os.path.join(in_dir, 'correlation.dat')
-	if not os.path.exists(corr_file):
-		get_correlation(in_dir=f'{root_dir}/out/src',
-		                out_dir=f'{root_dir}/report/out/src',
-		                out_file=corr_file)
-	else:
-		pass
+	corr_file = os.path.join(in_dir, 'correlation', 'correlation.dat')
+	DATASETS = ['UNB(PC1)',
+	            'CTU',
+	            'MAWI',
+	            'UCHI(SFRIG_2021)']
+	feature = 'SIZE'  # the correlation code only works for SIZE
+	header = True
+	out_dir = f'{root_dir}/report/out/correlation'
+	get_correlation(in_dir=f'{root_dir}/out/src',
+	                datasets=DATASETS,
+	                feature=feature,
+	                header=header,
+	                out_dir=out_dir,
+	                out_file=corr_file)
 	data = load(corr_file)
-	plot_correlation_multi(data, in_dir, show=True)
+	out_file = os.path.join(out_dir, feature, f"header_{header}", 'correlation.pdf')
+	plot_correlation_multi(data, out_file=out_file, show=True)
 
 
 if __name__ == '__main__':

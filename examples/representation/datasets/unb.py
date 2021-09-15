@@ -12,9 +12,8 @@ import pandas as pd
 from loguru import logger as lg
 
 from odet.datasets._base import Base
-from odet.pparser.parser import filter_ip, filter_csv_ip, _pcap2flows, _flows2subflows, \
-	_get_flow_duration, augment_flows
-from odet.utils.tool import load, get_file_path, check_path, dump, timer, remove_file
+from odet.pparser.parser import filter_ip, filter_csv_ip, _pcap2flows, _get_flow_duration, augment_flows
+from odet.utils.tool import load, get_file_path, check_path, dump, remove_file
 
 
 def merge_labels(label_file_lst=[], mrg_label_path=''):
@@ -218,7 +217,7 @@ class UNB(Base):
 			                                   dataset_name='UNB/CICIDS_2017/',
 			                                   data_cat='labels/Friday',
 			                                   file_name='Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv')
-			friday_label_tmp = friday_label + 'all.csv'
+			friday_label_tmp = friday_label + '-all.csv'
 			check_path(friday_label_tmp)
 			merge_labels([friday_label_orig1, friday_label_orig2, friday_label_orig3],
 			             mrg_label_path=friday_label_tmp)
@@ -239,39 +238,39 @@ class UNB(Base):
 
 		return meta
 
-	# @timer
-	# def _generate_flows(self):
-	#
-	# 	self.subflows_file = os.path.join(self.out_dir, 'normal_abnormal_subflows.dat')
-	# 	remove_file(self.subflows_file, self.overwrite)
-	# 	if os.path.exists(self.subflows_file):
-	# 		return load(self.subflows_file)
-	#
-	# 	meta = load(self.orig_flows)
-	# 	normal_flows, abnormal_flows = meta['normal_flows'], meta['abnormal_flows']
-	# 	lg.debug(f'original normal flows: {len(normal_flows)} and abnormal flows: {len(abnormal_flows)}')
-	# 	qs = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 1]
-	# 	len_stat = np.quantile([len(pkts) for f, pkts in normal_flows], q=qs)
-	# 	lg.debug(f'flows: {len(normal_flows)}, length statistic: {len_stat}, when q = {qs}')
-	# 	meta = {'flows': normal_flows, 'len_stat': (len_stat, qs),
-	# 	        'normal_flows': normal_flows, 'abnormal_flows': abnormal_flows}
-	# 	dump(meta, out_file=os.path.join(self.out_dir, 'normal_abnormal_flows.dat'))
-	#
-	# 	# step 2.2. only get normal flows durations
-	# 	self.flows_durations = [_get_flow_duration(pkts) for (fids, pkts) in normal_flows]
-	# 	normal_durations_stat = np.quantile(self.flows_durations, q=qs)
-	# 	lg.debug(f'normal_durations_stat: {normal_durations_stat}')
-	# 	self.subflow_interval = np.quantile(self.flows_durations, q=self.q_flow_dur)  # median  of flow_durations
-	# 	lg.debug(f'---subflow_interval: {self.subflow_interval}, q_flow_dur: {self.q_flow_dur}')
-	# 	# step 2.3 get subflows
-	# 	normal_flows, _ = _flows2subflows(normal_flows, interval=self.subflow_interval,
-	# 	                                  labels=['0'] * len(normal_flows))
-	# 	abnormal_flows, _ = _flows2subflows(abnormal_flows, interval=self.subflow_interval,
-	# 	                                    labels=['1'] * len(abnormal_flows))
-	# 	meta = {'normal_flows_durations': self.flows_durations, 'normal_durations_stat': (normal_durations_stat, qs),
-	# 	        'subflow_interval': self.subflow_interval, 'q_flow_dur': self.q_flow_dur,
-	# 	        'normal_flows': normal_flows, 'abnormal_flows': abnormal_flows}
-	# 	dump(meta, out_file=self.subflows_file)
-	#
-	# 	# only return subflows
-	# 	return meta
+# @timer
+# def _generate_flows(self):
+#
+# 	self.subflows_file = os.path.join(self.out_dir, 'normal_abnormal_subflows.dat')
+# 	remove_file(self.subflows_file, self.overwrite)
+# 	if os.path.exists(self.subflows_file):
+# 		return load(self.subflows_file)
+#
+# 	meta = load(self.orig_flows)
+# 	normal_flows, abnormal_flows = meta['normal_flows'], meta['abnormal_flows']
+# 	lg.debug(f'original normal flows: {len(normal_flows)} and abnormal flows: {len(abnormal_flows)}')
+# 	qs = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 1]
+# 	len_stat = np.quantile([len(pkts) for f, pkts in normal_flows], q=qs)
+# 	lg.debug(f'flows: {len(normal_flows)}, length statistic: {len_stat}, when q = {qs}')
+# 	meta = {'flows': normal_flows, 'len_stat': (len_stat, qs),
+# 	        'normal_flows': normal_flows, 'abnormal_flows': abnormal_flows}
+# 	dump(meta, out_file=os.path.join(self.out_dir, 'normal_abnormal_flows.dat'))
+#
+# 	# step 2.2. only get normal flows durations
+# 	self.flows_durations = [_get_flow_duration(pkts) for (fids, pkts) in normal_flows]
+# 	normal_durations_stat = np.quantile(self.flows_durations, q=qs)
+# 	lg.debug(f'normal_durations_stat: {normal_durations_stat}')
+# 	self.subflow_interval = np.quantile(self.flows_durations, q=self.q_flow_dur)  # median  of flow_durations
+# 	lg.debug(f'---subflow_interval: {self.subflow_interval}, q_flow_dur: {self.q_flow_dur}')
+# 	# step 2.3 get subflows
+# 	normal_flows, _ = _flows2subflows(normal_flows, interval=self.subflow_interval,
+# 	                                  labels=['0'] * len(normal_flows))
+# 	abnormal_flows, _ = _flows2subflows(abnormal_flows, interval=self.subflow_interval,
+# 	                                    labels=['1'] * len(abnormal_flows))
+# 	meta = {'normal_flows_durations': self.flows_durations, 'normal_durations_stat': (normal_durations_stat, qs),
+# 	        'subflow_interval': self.subflow_interval, 'q_flow_dur': self.q_flow_dur,
+# 	        'normal_flows': normal_flows, 'abnormal_flows': abnormal_flows}
+# 	dump(meta, out_file=self.subflows_file)
+#
+# 	# only return subflows
+# 	return meta

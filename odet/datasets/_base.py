@@ -1,6 +1,9 @@
 """ Base class for dataset
 
 """
+# Email: kun.bj@outlook.com
+# Author: kun
+# License: xxx
 import os
 
 import numpy as np

@@ -2,7 +2,7 @@
 
 	Instructions:
 		# Note: run the below command under the root directory of the project.
-		python3.7 examples/representation/report/paper_plots.py
+		PYTHONPATH=. python3.7 examples/representation/report/paper_plots.py
 
 """
 # Email: kun.bj@outlook.com
@@ -277,6 +277,16 @@ def bar_plot(data, MODELS=[], fig_type='', out_file="F1_for_all.pdf", n_rows=3, 
 			ys = []
 			xs = []
 			yerrs = _df['std_error'].values
+			ns_ = [int(1 / v ** 2) for v in yerrs]
+			ds_ = _df['dataset'].values.tolist()
+			lg.debug(f'{list(zip(yerrs, ns_, ds_))}')
+
+			# rearrange yerrs
+			yerrs_ = []
+			num_bars = _df['feature'].nunique()
+			for i in range(num_bars):
+				yerrs_.extend(yerrs[i::num_bars])
+			yerrs = yerrs_
 			for i_p, p in enumerate(g.patches):
 				height = p.get_height()
 				width = p.get_width()
@@ -292,7 +302,7 @@ def bar_plot(data, MODELS=[], fig_type='', out_file="F1_for_all.pdf", n_rows=3, 
 					g.axvline(color='black', linestyle='--', x=pre + (cur - pre) / 2, ymin=0, ymax=1, alpha=0.3)
 					pre = cur + p.get_width() * num_bars
 
-			axes[r, c].errorbar(x=xs + width / 2, y=ys, yerr=yerrs, fmt='none', n_cols='b', capsize=3)
+			axes[r, c].errorbar(x=xs + width / 2, y=ys, yerr=yerrs, fmt='none', ecolor='b', capsize=3)
 			g.set(xlabel=None)
 			g.set(ylabel=None)
 
@@ -539,15 +549,15 @@ def fft_diff(data, tuning, DATASETS, MODELS):
 			header = 'header_False'
 			# 'FFT_IAT'- 'IAT'
 			d, s = _diff(data, header, tuning, 'FFT_IAT', 'IAT', dataset, model)
-			feat = 'FFT_IAT\\IAT'
+			feat = 'FFT_IAT \\ IAT'
 			results.append([tuning, model, dataset, feat, d, s])
 			# IAT+SIZE(w.header) - IAT+SIZE(wo. header)
 			d, s = _diff(data, header, tuning, 'FFT_SAMP_NUM', 'SAMP_NUM', dataset, model)
-			feat = 'IAT+SIZE(w.header)\\IAT+SIZE(wo. header)'
+			feat = 'IAT+SIZE(w.header) \\ IAT+SIZE(wo. header)'
 			results.append([tuning, model, dataset, feat, d, s])
 			# SAMP_SIZE(w.header) - SAMP_SIZE(wo. header)
 			d, s = _diff(data, header, tuning, 'FFT_SAMP_SIZE', 'SAMP_SIZE', dataset, model)
-			feat = 'SAMP_SIZE(w.header)\\SAMP_SIZE(wo. header)'
+			feat = 'SAMP_SIZE(w.header) \\ SAMP_SIZE(wo. header)'
 			results.append([tuning, model, dataset, feat, d, s])
 
 	return results
@@ -569,7 +579,7 @@ def main():
 	# in_file = 'examples/representation/report/res.csv'
 	# check_path(in_file)
 	# copyfile(raw_file, in_file)
-	in_file = 'examples/representation/out/src/results/20210912/short.csv'
+	in_file = 'examples/representation/out/src/results/20210913/short.csv'
 	data = parse_csv(in_file)
 	data = format_name(data, data_orig2name)  #
 	out_dir = 'examples/representation/report/out'
@@ -580,10 +590,10 @@ def main():
 	### Get the results on part of datasets and all algorithms
 	# 1. datasets: [UNB(PC1), UNB(PC4), CTU, MAWI, TV&RT, SFrig, and BSTch]
 	# algorithms: [OCSVM, IF, AE, KDE, GMM, PCA]
-	DATASETS1 = ['UNB(PC1)', 'UNB(PC4)', 'CTU', 'MAWI', 'TV&RT', 'SFrig', 'BSTch']
-	DATASETS2 = ['UNB(PC2)', 'UNB(PC3)', 'UNB(PC5)', 'GHom', 'SCam']
-	DATASETS3 = ['UNB(PC1)', 'UNB(PC2)', 'UNB(PC3)', 'UNB(PC4)', 'UNB(PC5)', 'CTU', 'MAWI', 'TV&RT', 'GHom',
-	             'SCam', 'SFrig', 'BSTch']
+	DATASETS1 = ['UNB(PC1)', 'UNB(PC4)', 'CTU', 'MAWI', 'TV&RT', 'SFrig','BSTch']
+	DATASETS2 = ['UNB(PC2)', 'UNB(PC3)', 'UNB(PC5)', 'SCam', 'GHom']
+	DATASETS3 = ['UNB(PC1)', 'UNB(PC2)', 'UNB(PC3)', 'UNB(PC4)', 'UNB(PC5)', 'CTU', 'MAWI', 'TV&RT', 'SFrig', 'BSTch',
+	             'SCam', 'GHom']
 	DATASETS_LST = [DATASETS1, DATASETS2, DATASETS3]
 	FIGS = ['size_effect', 'header_effect', 'fft_effect']
 	for tuning in TUNING:
@@ -609,6 +619,8 @@ def main():
 			check_path(out_file)
 			results = fft_diff(data, tuning, DATASETS, MODELS)
 			fft_effect_plot(results, MODELS, DATASETS, fig_type, out_file)
+
+			lg.info('\n')
 
 
 if __name__ == '__main__':

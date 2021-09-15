@@ -356,7 +356,7 @@ def main_no_tuning_vs_tuning(args=None):
 			n_components_arr = ['mle']
 		history = {}
 		best = {'score': 0, 'model': None}
-		lg.debug(f'Tuning: n_estimators_arr = {n_components_arr}')
+		lg.debug(f'Tuning: n_components_arr = {n_components_arr}')
 		for n_components in n_components_arr:
 			args.model_params = {'n_components': n_components}
 			history_ = main(args, test=False)
@@ -538,8 +538,13 @@ def main(args=None, test=False):
 
 		if 'SAMP' in args.feature:
 			best = {'score': 0, 'model': None}
-			for X, y in zip(data.X, data.y):
-				res_, data_ = _single_main(args, X, y, test=test)
+			for i, (X, y) in enumerate(zip(data.X, data.y)):
+				lg.debug(f'SAMP_{i}')
+				try:
+					res_, data_ = _single_main(args, X, y, test=test)
+				except Exception as e:
+					lg.error(f'Error: {e}. SAMP_{i}')
+					continue
 				# get the best results on SAMP data
 				if res_['score'] > best['score']:
 					best['score'] = res_['score']
