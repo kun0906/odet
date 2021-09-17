@@ -23,11 +23,11 @@ OUT_DIR = r'examples/representation/out'
 demo = True
 if demo:
 	DATASETS = ['UCHI(SCAM_2019)']
-	FEATURES = ['IAT']
-	# FEATURES += ['FFT_' + v for v in FEATURES]
-	HEADER = [True]
-	MODELS = ['PCA']
-	TUNING = [False]
+	# FEATURES = ['IAT']
+	# # FEATURES += ['FFT_' + v for v in FEATURES]
+	# HEADER = [False]
+	# MODELS = ['PCA']
+	# TUNING = [False]
 
 	# DATASETS = [
 	# 	'UNB(PC1)', 'UNB(PC2)', 'UNB(PC3)', 'UNB(PC4)',
@@ -37,17 +37,17 @@ if demo:
 	# 	'UCHI(SFRIG_2021)',
 	# 	'UCHI(SMTV_2019)', 'UCHI(GHOME_2019)', 'UCHI(SCAM_2019)', 'UCHI(BSTCH_2019)'
 	# ]
-	# FEATURES = [
-	# 	'IAT',
-	# 	'SIZE', 'IAT+SIZE',
-	# 	'STATS',
-	# 	'SAMP_NUM',
-	# 	'SAMP_SIZE'
-	# ]
-	# FEATURES += ['FFT_' + v for v in FEATURES]
-	# # MODELS = ['OCSVM', 'GMM', 'PCA', 'KDE', 'IF']
-	# HEADER = [False, True]
-	# TUNING = [False, True]
+	FEATURES = [
+		'IAT',
+		'SIZE', 'IAT+SIZE',
+		'STATS',
+		'SAMP_NUM',
+		'SAMP_SIZE'
+	]
+	FEATURES += ['FFT_' + v for v in FEATURES]
+	MODELS = ['OCSVM', 'GMM', 'PCA', 'KDE', 'IF']
+	HEADER = [False, True]
+	TUNING = [False, True]
 else:
 	pass
 

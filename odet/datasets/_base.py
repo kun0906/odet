@@ -167,7 +167,7 @@ class Base:
 		normal_lengths_stat = np.quantile(normal_flow_lengths, q=qs)
 		lg.debug(f'normal_lengths_stat: {normal_lengths_stat}, where q = {qs}')
 		self.dim = int(np.floor(np.quantile(normal_flow_lengths, self.q_flow_dur)))
-		lg.info(f'dim={self.dim}')
+		lg.info(f'dim(SIZE) = {self.dim}')
 
 		self.X = []
 		self.y = []
