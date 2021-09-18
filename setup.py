@@ -1,5 +1,5 @@
 """Installation
-    pip3 install odet
+    pip3 install odet/
 """
 # Authors: kun.bj@outlook.com
 #

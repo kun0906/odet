@@ -13,6 +13,7 @@ Reference:
 import os
 import subprocess
 from collections import OrderedDict
+from functools import wraps
 
 import numpy as np
 import pandas as pd
@@ -21,6 +22,24 @@ from scapy.layers.inet import IP, TCP, UDP
 
 from odet.utils.tool import data_info, timer, check_path
 
+def timing(func):
+	"""Calculate the execute time of the given func"""
+
+	@wraps(func)
+	def wrapper(*args, **kwargs):
+		start = time.time()
+		st = datetime.fromtimestamp(start).strftime('%Y-%m-%d %H:%M:%S')
+		print(f'\'{func.__name__}()\' starts at {st}')
+		result = func(*args, **kwargs)
+		end = time.time()
+		ed = datetime.fromtimestamp(end).strftime('%Y-%m-%d %H:%M:%S')
+		tot_time = (end - start) / 60
+		tot_time = float(f'{tot_time:.4f}')
+		print(f'\'{func.__name__}()\' ends at {ed} and takes {tot_time} mins.')
+		func.tot_time = tot_time  # add new variable to func
+		return result, tot_time
+
+	return wrapper
 
 def _get_fid(pkt):
 	"""Extract fid (five-tuple) from a packet: only focus on IPv4
@@ -792,7 +811,7 @@ class PCAP:
 		self.verbose = verbose
 		self.random_state = random_state
 
-	@timer
+	@timing
 	def _pcap2flows(self, tcp_timeout=600, udp_timeout=600):
 		"""Extract flows from the given pcap.
 
@@ -831,7 +850,7 @@ class PCAP:
 		_, tot_time = self._pcap2flows(tcp_timeout=tcp_timeout, udp_timeout=udp_timeout)
 		self.pcap2flows.__dict__['tot_time'] = tot_time
 
-	@timer
+	@timing
 	def _flows2subflows(self, interval=0, q_interval=0.1, *, tcp_timeout=600, udp_timeout=600):
 		"""Extract flows from the given pcap and split each flow to subflow by "interval" or "q_interval".
 				   It prefers to choose "interval" as the split measure if interval > 0; otherwise, use q_interval to find an interval.
@@ -900,7 +919,7 @@ class PCAP:
 		_, tot_time = self._flows2subflows(interval, q_interval, tcp_timeout=tcp_timeout, udp_timeout=udp_timeout)
 		self.flows2subflows.__dict__['tot_time'] = tot_time
 
-	@timer
+	@timing
 	def _flow2features(self, feat_type='IAT', *, fft=False, header=False, dim=None):
 		"""Extract features from each flow according to feat_type, fft and header.
 
@@ -997,7 +1016,7 @@ class PCAP:
 		_, tot_time = self._flow2features(feat_type, fft=fft, header=header, dim=dim)
 		self.flow2features.__dict__['tot_time'] = tot_time
 
-	@timer
+	@timing
 	def _label_flows(self, label_file='', label=0):
 		"""label each flow by label_file (only for CICIDS_2017 label_file) or label.
 		If you want to parse other label file, you have to override "label_flows()" with your own one.
