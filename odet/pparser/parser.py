@@ -995,6 +995,8 @@ class PCAP:
 		if self.verbose > 5:
 			print(np.all(self.features >= 0))
 
+		return self.features
+
 	def flow2features(self, feat_type='IAT', *, fft=False, header=False, dim=None):
 		"""Extract features from each flow according to feat_type, fft and header.
 
