@@ -20,34 +20,36 @@ from odet.utils.tool import dump, timer, check_path, remove_file
 
 RESULT_DIR = f'results/{START_TIME}'
 OUT_DIR = r'examples/representation/out'
-demo = True
+demo = False
 if demo:
-	DATASETS = ['UCHI(SCAM_2019)']
-	FEATURES = ['SAMP_SIZE']
+	# DATASETS = ['UCHI(SCAM_2019)']
+	# FEATURES = ['SAMP_SIZE']
 	# # FEATURES += ['FFT_' + v for v in FEATURES]
 	# HEADER = [False]
-	MODELS = ['AE']
+	MODELS = ['OCSVM']
 	# TUNING = [False]
 
-	# DATASETS = [
-	# 	'UNB(PC1)', 'UNB(PC2)', 'UNB(PC3)', 'UNB(PC4)',
-	# 	'UNB(PC5)',
-	# 	'MAWI',
-	# 	'CTU',
-	# 	'UCHI(SFRIG_2021)',
-	# 	'UCHI(SMTV_2019)', 'UCHI(GHOME_2019)', 'UCHI(SCAM_2019)', 'UCHI(BSTCH_2019)'
-	# ]
-	# FEATURES = [
-	# 	'IAT',
-	# 	'SIZE', 'IAT+SIZE',
-	# 	'STATS',
-	# 	'SAMP_NUM',
-	# 	'SAMP_SIZE'
-	# ]
+	DATASETS = [
+		# 'UNB(PC1)',
+		'UNB(PC2)',
+		# 'UNB(PC3)', 'UNB(PC4)',
+		# 'UNB(PC5)',
+		# 'MAWI',
+		# 'CTU',
+		# 'UCHI(SFRIG_2021)',
+		# 'UCHI(SMTV_2019)', 'UCHI(GHOME_2019)', 'UCHI(SCAM_2019)', 'UCHI(BSTCH_2019)'
+	]
+	FEATURES = [
+		'IAT',
+		# 'SIZE', 'IAT+SIZE',
+		# 'STATS',
+		# 'SAMP_NUM',
+		# 'SAMP_SIZE'
+	]
 	# FEATURES = ['FFT_' + v for v in FEATURES]
 	# MODELS = ['OCSVM', 'GMM', 'PCA', 'KDE', 'IF']
-	HEADER = [False, True]
-	TUNING = [False, True]
+	HEADER = [False]
+	TUNING = [True]
 else:
 	pass
 
@@ -252,13 +254,13 @@ def gather(in_dir='src', out_dir=''):
 
 @timer
 def main():
-	# # clean()
+	# clean()
 
-	# 1. Run the main function and get the results for the given parameters
-	try:
-		_main()
-	except Exception as e:
-		lg.error(f'Error: {e}.')
+	# # 1. Run the main function and get the results for the given parameters
+	# try:
+	# 	_main()
+	# except Exception as e:
+	# 	lg.error(f'Error: {e}.')
 
 	# 2. Gather all the individual result
 	try:

@@ -640,7 +640,7 @@ def _get_split_interval(flow_durations, q_interval=0.9):
 	return interval
 
 
-def _get_FFT_data(features, fft_bin='', fft_part='real'):
+def _get_FFT_data(features, fft_bin='', fft_part='magnitude'):
 	"""Do fft transform of features
 
 	Parameters
@@ -650,24 +650,18 @@ def _get_FFT_data(features, fft_bin='', fft_part='real'):
 	fft_bin: int
 		the dimension of transformed features
 	fft_part: str
-		'real' or 'real+imaginary' transformation
 
 	Returns
 	-------
 	fft_features: a list
 		transformed fft features
 	"""
-	if fft_part == 'real':  # default
-		fft_features = [list(np.real(np.fft.fft(v, n=fft_bin))) for v in features]
-
-	elif fft_part == 'real+imaginary':
-		msg = f'{fft_part}'
-		raise NotImplementedError(msg)
-
+	if fft_part == 'phase':
+		# phase
+		fft_features = [list(np.angle(np.fft.fft(v, n=fft_bin))) for v in features]
 	else:
-		msg = f'fft_part: {fft_part} is not correct, please modify it and retry!'
-		raise ValueError(msg)
-
+		# default: magnitude
+		fft_features =  [list(np.abs(np.fft.fft(v, n=fft_bin))) for v in features]
 	return fft_features
 
 

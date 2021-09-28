@@ -34,7 +34,7 @@ class CTU(Base):
 		self.Xy_file = os.path.join(self.out_dir, self.direction, self.dataset_name,
 		                            self.feature_name, f'header_{self.header}', f'Xy.dat')
 		self.out_dir = os.path.join(self.out_dir, self.direction, self.dataset_name)
-		lg.info(f'{self.Xy_file}')
+		lg.info(f'{self.Xy_file} exists: {os.path.exists(self.Xy_file)}')
 
 	def generate(self):
 		remove_file(self.Xy_file, self.overwrite)

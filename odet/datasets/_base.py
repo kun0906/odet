@@ -291,45 +291,6 @@ def _fix_data(features, feat_dim):
 	return np.asarray(fixed_features, dtype=float)
 
 
-def _get_fft_data(features, fft_bin='', fft_part='real', feat_set='fft_iat'):
-	""" Do fft transform of features
-
-	Parameters
-	----------
-	features: features
-
-	fft_bin: int
-		the dimension of transformed features
-	fft_part: str
-		'real' or 'real+imaginary' transformation
-
-	feat_set: str
-
-	Returns
-	-------
-	fft_features:
-		transformed fft features
-	"""
-	if fft_part == 'real':  # default
-		fft_features = [np.real(np.fft.fft(v, n=fft_bin)) for v in features]
-
-	elif fft_part == 'real+imaginary':
-		fft_features = []
-		for i, v in enumerate(features):
-			complex_v = np.fft.fft(v, fft_bin)
-			if i == 0:
-				print(f'dimension of the real part: {len(np.real(complex_v))}, '
-				      f'dimension of the imaginary part: {len(np.imag(complex_v))}')
-			v = np.concatenate([np.real(complex_v), np.imag(complex_v)], axis=np.newaxis)
-			fft_features.append(v)
-
-	else:
-		print(f'fft_part: {fft_part} is not correct, please modify it and retry')
-		return -1
-
-	return np.asarray(fft_features, dtype=float)
-
-
 def _get_header(flows):
 	features = []
 	fids = []

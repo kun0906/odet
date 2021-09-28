@@ -183,8 +183,7 @@ def main():
 	-------
 
 	"""
-	in_file = 'examples/representation/out/src/results/20210912/short.csv'
-	in_file = 'examples/representation/out/src/results/20210913/short.csv'
+	in_file = 'examples/representation/out/src/results/2021-09-28/short.csv'
 	data = parse_csv(in_file)
 	data = format_name(data, data_orig2name)  #
 	out_dir = 'examples/representation/report/out'

@@ -508,7 +508,7 @@ def pkt_header_diff(data, tuning, DATASETS, MODELS):
 			results.append([tuning, model, dataset, feat, d, s])
 			# SAMP_SIZE(w.header) - SAMP_SIZE(wo. header)
 			d, s = _diff(data, 'header_True', 'header_False', tuning, 'SAMP_SIZE', dataset, model)
-			feat = 'SAMP_SIZE(w.header) \\ (wo. header)'
+			feat = 'SAMP-SIZE(w.header) \\ (wo. header)'
 			results.append([tuning, model, dataset, feat, d, s])
 
 	return results
@@ -549,15 +549,13 @@ def fft_diff(data, tuning, DATASETS, MODELS):
 			header = 'header_False'
 			# 'FFT_IAT'- 'IAT'
 			d, s = _diff(data, header, tuning, 'FFT_IAT', 'IAT', dataset, model)
-			feat = 'FFT_IAT \\ IAT'
+			feat = 'IAT-FFT \\ IAT'
 			results.append([tuning, model, dataset, feat, d, s])
-			# IAT+SIZE(w.header) - IAT+SIZE(wo. header)
 			d, s = _diff(data, header, tuning, 'FFT_SAMP_NUM', 'SAMP_NUM', dataset, model)
-			feat = 'IAT+SIZE(w.header) \\ IAT+SIZE(wo. header)'
+			feat = 'SAMP-NUM-FFT \\ SAMP-NUM'
 			results.append([tuning, model, dataset, feat, d, s])
-			# SAMP_SIZE(w.header) - SAMP_SIZE(wo. header)
 			d, s = _diff(data, header, tuning, 'FFT_SAMP_SIZE', 'SAMP_SIZE', dataset, model)
-			feat = 'SAMP_SIZE(w.header) \\ SAMP_SIZE(wo. header)'
+			feat = 'SAMP-SIZE-FFT \\ SAMP-SIZE'
 			results.append([tuning, model, dataset, feat, d, s])
 
 	return results
@@ -579,7 +577,7 @@ def main():
 	# in_file = 'examples/representation/report/res.csv'
 	# check_path(in_file)
 	# copyfile(raw_file, in_file)
-	in_file = 'examples/representation/out/src/results/20210913/short.csv'
+	in_file = 'examples/representation/out/src/results/2021-09-28/short.csv'
 	data = parse_csv(in_file)
 	data = format_name(data, data_orig2name)  #
 	out_dir = 'examples/representation/report/out'

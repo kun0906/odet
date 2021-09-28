@@ -46,7 +46,7 @@ if demo:
 	]
 	FEATURES += ['FFT_' + v for v in FEATURES]
 	HEADER = [False, True]
-	MODELS = ['OCSVM', 'GMM', 'AE', 'PCA', 'KDE', 'IF']
+	# MODELS = ['OCSVM', 'GMM', 'AE', 'PCA', 'KDE', 'IF']
 	TUNING = [False, True]
 else:
 	pass

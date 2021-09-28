@@ -29,7 +29,7 @@
     
 # How to install?
 ```sh
-    pip3 install odet
+    pip3 install odet/
 ```
 
 
@@ -105,7 +105,9 @@ print(ndm.train.tot_time, ndm.test.tot_time, ndm.score)
 ```
 
 - For more examples, please check the 'examples' directory 
-    
+```shell
+PYTHONPATH=./ sh examples/representation/reprst2neon.sh
+```    
 
 
 # TODO
