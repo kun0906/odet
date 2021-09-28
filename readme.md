@@ -29,8 +29,11 @@
     
 # How to install?
 ```sh
-    pip3 install odet/
-```
+	git clone https://github.com/kun0906/odet.git
+    cd odet 
+    pip3 install .
+    (Note: pip will search /opt/mypackage for a setup.py, build a wheel, then install it.)
+``` 
 
 
 # How to use?

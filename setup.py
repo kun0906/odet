@@ -40,7 +40,7 @@ def read(readme_file):
 
 
 setup(name=APP_NAME,
-      version='0.0.1',
+      version='0.0.5',
       description='Novelty Detection',
       long_description=read('readme.md'),
       # long_description='Data representation for IoT traffic',
