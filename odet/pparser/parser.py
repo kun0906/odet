@@ -935,6 +935,7 @@ class PCAP:
 		self.feat_type = feat_type
 
 		if dim is None:
+			if not hasattr(self, 'q_interval'): self.q_interval = 0.9
 			num_pkts = [len(pkts) for fid, pkts in self.flows]
 			dim = int(np.floor(np.quantile(num_pkts, self.q_interval)))  # use the same q_interval to get the dimension
 
